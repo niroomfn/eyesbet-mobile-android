@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Eyesbet</title>
+
+        <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
+        
+        
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+    
+<script type="text/javascript">
+
+    var leagues = ["NBA","NFL","MLB","NHL"];
+    
+    
+$(document).ready(function() {
+
+$.mobile.showPageLoadingMsg('a',"Loading...",true);
+                
+
+$.ajax({
+        type: 'GET',
+        url: "http://eyesbet.com/fixtures",
+        dataType: "xml",
+       cache: true,
+        success: function (xml) {
+
+		  parseLeagues_1(xml);
+       
+       $.mobile.hidePageLoadingMsg();
+
+      
+        }, 
+        error: function(xhr, textStatus, error){
+       alert( error);
+    },
+        }); 
+        });
+
+
+  
+    function parseLeagues_1(xml) {
+        
+        s = document.getElementById("league");
+        id = $(xml).find("league").attr("n");
+        $(xml).find("league").each(function () {
+        
+            s.options[s.options.length]= new Option($(this).attr("n"), $(this).attr("n"));
+            
+                                                           
+        } );
+        
+        
+        var el = $('#league');
+        
+        el.selectmenu("refresh", true);
+        
+        value = "";
+       
+        $(xml).find("fixture").each(function () {
+                                    
+                                    
+            value = $(this).attr("a")+"@"+$(this).attr("h")+"@"+$(this).attr("s")+"@"+$(this).attr("id")+"@"+id;
+                                    
+            $('#'+id).append( "<input type='checkbox' name='games' id='"+$(this).attr("id")+"' value='"+value+ "' /><label for='"+$(this).attr("id")+"'>"+$(this).attr("a")+" @ "+ $(this).attr("h")+ " <br/>"+$(this).attr("s")+"</label>");
+                                    
+                                    
+                                    
+        });
+                                   
+                                   
+                                   
+        $("input[type='checkbox']").checkboxradio();
+
+        
+        if ($('#'+id).html().indexOf("<div>") < 0 ) {
+            $('#'+id).append("<div style='margin-top:50px;color:darkred;font-weight:bold'><b>No fixtures available at this time.</b></div>");
+        }
+        
+        
+    }
+    
+  
+  
+              
+  function parseLeague(data) {
+   var id;
+   var value="";
+      count = 0;
+   $(data).find("league").each(function()
+  			{
+                               
+  			id = $(this).attr("n");
+         
+  			$(this).find("fixture").each(function() {
+             
+                                         count++;
+                                         
+  			 value = $(this).attr("a")+"@"+$(this).attr("h")+"@"+$(this).attr("s")+"@"+$(this).attr("id")+"@"+id;
+                                         
+            $('#'+id).append( "<input type='checkbox' name='games' id='"+$(this).attr("id")+"' value='"+value+ "' /><label for='"+$(this).attr("id")+"'>"+$(this).attr("a")+" @ "+ $(this).attr("h")+ " <br/>"+$(this).attr("s")+"</label>");
+  			
+		    });
+                               
+                               
+                            
+		 
+		  });
+      if (count > 0) {
+        
+      $("input[type='checkbox']").checkboxradio();
+          
+      } else {
+            if ($('#'+id).html().indexOf("<div>") < 0 ) {
+          $('#'+id).append("<div style='margin-top:50px;color:darkred;font-weight:bold'><b>No fixtures available at this time.</b></div>");
+          }
+      }
+  }
+  
+ function validate() {
+    var check = false;
+    var checkedGames = "";
+    count =0;
+   
+ 	
+ 	
+ 	
+ 	games = document.getElementsByName("games");
+ 	for (i=0; i < games.length; i++) {
+ 	 
+ 	  if (games[i].checked) {
+ 		  count++;
+ 	  	check = true;
+ 	  	checkedGames = checkedGames + games[i].value+",";
+ 	  
+ 	  }  
+ 	}
+ 	
+ 	
+ 	if (check == false) {
+ 	   alert("You must select a game to continue");
+ 	   return false;
+ 	} else {
+ 		
+ 	   submitForm(checkedGames);
+ 	   return false;
+ 	}
+ 	
+ 	
+ 
+  }
+  
+    
+    
+    
+    
+    
+    function submitLeague() {
+        $('#league').blue();
+        value = document.getElementById("league").value;
+        for( var i=0; i < leagues.length; i++) {
+            
+            if (leagues[i] == value) {
+                document.getElementById(value).style.display = "";
+                
+            } else {
+                
+                
+                document.getElementById(leagues[i]).style.display = "none";
+            }
+            
+        }
+        
+        if ( $("#"+value).html().indexOf("checkbox") < 0) {
+            
+        $.ajax({
+               type: 'GET',
+               url: "http://eyesbet.com/fixtures?league="+value,
+               dataType: "xml",
+               cache: true,
+               success: function (xml) {
+               
+               
+               
+               parseLeague(xml);
+               
+               $.mobile.hidePageLoadingMsg();
+               
+               
+               },
+               error: function(xhr, textStatus, error){
+               alert( error);
+               },
+               });
+            
+        }
+
+    
+    return false;
+
+        
+        
+        
+    }
+  
+  function submitForm(games) {
+  
+  
+  	$.ajax({
+		type: 'POST',
+		data: "games="+games,
+		url: 'http://eyesbet.com/m.createBet',
+		dataType: 'xml',
+		beforeSend: function(xhr){
+            xhr.withCredentials=true;
+            },
+
+		success: function(xml){
+		
+			window.location = "enterBet.html";
+			
+		},
+		error: function(xhr, textStatus, error){
+			
+			alert(xhr.responseText);
+           window.location = "index.html";
+
+		}
+	});
+	
+   
+   
+  
+  }
+ 
+       function showLeague(league) {
+
+           for (var i=0; i < leagues.length; i++) {
+               table = document.getElementById(leagues[i])
+               if (leagues[i] != league) {
+                 
+                   table.style.display = "none";
+               } if (leagues[i] == league) {
+                   
+                   table.style.display = "inline";
+               }
+           }
+        
+        
+    }
+                  
+</script>
+
+    <style type="text/css">
+            table { width:100%; }
+            table caption { text-align:left;font-weight:bold;  }
+            table thead th { text-align:left; border-bottom-width:1px; border-top-width:1px; }
+            table th, td { text-align:left; }
+            table {font-size:small; }
+        
+        
+    </style>
+
+</head>
+<body onload="showLeague('NBA')" >
+   
+    
+    <div data-role="page" >
+    
+    <div data-role="header"  data-position="fixed">
+        
+        
+      
+        
+        <h2>Fixtures</h2>
+        <select   id="league"   onchange="return submitLeague();" >
+            
+            </select>
+        
+        
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+        <div data-role="content" data-dom-cache="true" >
+            
+          
+                
+          <div id="NBA" style="display:none" align="center"   >
+              
+              </div>
+           
+
+            
+            <div id="NFL" style="display:none" align="center"   >
+                
+            </div>
+            
+            
+            <div id="MLB" style="display:none" align="center"   >
+                
+            </div>
+            
+            <div id="NHL" style="display:none" align="center"   >
+                
+            </div>
+            
+            
+                
+            
+
+            
+            
+         
+         
+           
+            </div>
+            
+            
+            
+            
+            
+        
+    
+    
+    
+    
+    <div align="center" data-theme="a" data-role="footer" data-position="fixed">
+       
+        
+        
+        <div data-role="controlgroup" data-type="horizontal"  data-mini="true">
+            <a href="#" data-role="button" data-icon="plus" onclick="return validate()" data-theme="a">Create Bet</a>
+            <a href="#" data-role="button" data-icon="delete" onclick="history.back()" data-theme="a">Cancel</a>
+        </div>
+        
+        
+        
+    
+    </div>
+        
+    </div>
+
+
+</body>
+</html>
