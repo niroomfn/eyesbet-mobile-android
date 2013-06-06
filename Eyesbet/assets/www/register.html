@@ -1,0 +1,156 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
+    
+    
+    <script type="text/javascript" charset="utf-8" src="cordova-2.4.0.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+ <script type="text/javascript">
+ 
+ function submitForm() {
+     
+    var query = "";
+    password = "";
+    cpassword = "";
+     
+    elements = document.getElementsByTagName("input");
+    
+     
+    for (var i=0; i < elements.length; i++) {
+        
+        if (elements[i].name == "firstName") {
+        	query = query + "firstName="+elements[i].value +"&";
+            
+           if (elements[i].value = "") {
+               alert("Invalid first name");
+               return false;
+           }
+        } if (elements[i].name == "lastName") {
+           query = query + "lastName="+elements[i].value + "&";
+        } if ( elements[i].name == "email") {
+        		query = query + "email="+elements[i].value + "&";
+         } if (elements[i].name == "city") {
+         
+              query = query + "city="+elements[i].value + "&";
+         	} if (elements[i].name == "username") {
+         	     
+         	     if (elements[i].value.length < 3) {
+         	     	alert("Invalid username");
+         	     	return false;
+         	     } else {
+         	     	 query = query + "username="+elements[i].value + "&";
+         	     }
+         	   
+         	} if (elements[i].name == "password") {
+         	    
+         	   if (elements[i].value.length < 3) {
+         	      alert("Invalid password length. Must be greater than 3 characters");
+         	      return false;
+         	   } else {
+         	    password = elements[i].value;
+         	   
+         	   }
+         	} if (elements[i].name == "confirmPassword") {
+         	
+         	    cpassword = elements[i].value;
+         	     
+         	
+         	}
+       
+    }
+    
+     if (password != cpassword) {
+         
+     	alert("Password does not match the confirm password");
+     	return false;
+     } else {
+       	query = query +"password="+password;
+     }
+  	$.ajax({
+		type: 'POST',
+		data: query,
+		url: 'http://eyesbet.com/m.register',
+		dataType: 'html',
+		success: function(xml){
+		
+			alert("You have registered successfully");
+		
+			window.location = "index.html";
+			
+		},
+		error: function(){
+			
+			alert("There was an error processing your request");
+		}
+	});
+	
+ 	
+ 	
+ 	return false;
+   }
+  
+    function cancelRegister() {
+         
+        window.history.back();
+     }
+ 
+ </script>
+    
+    
+    
+
+
+</head>
+<body>
+
+    <div data-role="page" >
+        
+        <div data-role="header" data-theme="a"  data-position="fixed">
+            <h1>Register</h1>
+            
+            
+            
+            
+            
+        </div>
+    
+ <div data-role="content" >
+ <form  >
+ 
+  <table cellpadding="0" cellspacing="0">
+  
+      <tr>  
+          <td>First Name: </td> <td>   <input type="text" name="firstName" id="firstName" />
+ </td>  </tr>
+      <tr> <td>Last Name: </td>  <td><input type="text" name="lastName"  />
+ </td>  </tr>
+      <tr> <td>Email:</td> <td> <input type="text" name="email"  /> </td>  </tr>
+      <tr><td>User Name:</td>  <td> <input type="text" name="username"  /> </td>  <tr>
+          <tr><td>Password:</td> <td> <input type="password" name="password"  /> <td>  </tr>
+          <tr><td>Confirm Password:</td>  <td> <input type="password" name="confirmPassword" /> </td>  </tr>
+      
+  
+  </table>
+     <div align="center" style="margin-top:10px">
+     <fieldset    data-role="controlgroup" data-type="horizontal" >
+
+      <button type="button"  data-theme="a" data-icon="add" data-inline="false" onclick="return submitForm()">Register</button>
+      <button type="button"  data-theme="a" data-inline="false" data-icon="delete"  onclick="cancelRegister()">Cancel</button>
+         
+         </fieldset>
+         </div>
+
+ </form>
+
+</div>
+
+
+</div>
+
+
+</body>
+</html>

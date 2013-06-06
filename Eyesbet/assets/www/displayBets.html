@@ -1,0 +1,432 @@
+
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+
+<title>Eyesbet</title>
+    <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
+    <link rel="stylesheet" href="css/jquery-mobile-iscrollview.css"/>
+    
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+    <script src="js/iscroll.js"></script>
+    <script src="js/jquery-mobile-iscrollview.js"></script>
+<script type="text/javascript">
+
+    
+$(document).ready(function() {
+
+$.mobile.showPageLoadingMsg('a',"Loading...",true);
+
+$.ajax({
+        type: 'GET',
+        url: "http://eyesbet.com/m.displayBets",
+        dataType: "xml",
+        
+        success: function (xml) { 
+		  parseBets(xml);
+       
+       $.mobile.hidePageLoadingMsg();
+
+		 
+      
+        },
+        error: function(xhr, textStatus, error){
+       alert( xhr.responseText);
+       window.location = "index.html";
+
+    },
+        });
+     
+                  });
+
+
+  
+    
+    
+    
+    
+              
+  function parseBets(data) {
+      var type;
+      color = "lightgray";
+      betStatus = "";
+      statusimg = "";
+      count = 0;
+      document.getElementById('livegame').value = $(data).find("xml").attr("livegame");
+    
+   $(data).find("bets").each(function()
+  			{
+                             count++;
+  			type = $(this).attr("type");
+             document.getElementById("div_"+type).style.display = "";
+  			$(this).find("bet").each(function() {
+                                     betStatus = $(this).attr("s");
+                                     if ( betStatus == "LOST" ) {
+                                     
+                                     color = "darkred";
+                                     statusimg = "<img src='img/cancel.png' height='15px' />"; 
+                                     
+                                     } else if(betStatus == "WON") {
+                                        color = "darkgreen";
+                                        statusimg = "<img src='img/ok.png' height='15px' />";
+                                     } else {
+                                        color = "black";
+                                        statusimg = "";
+                                     }
+                                     
+                                     
+                                     
+                $('#'+type).append("<tr style='background-color:lightgray;font-weight:bolder'><td></td><td height='30%'>"+statusimg+"  <b><a href='' style='font-weight:bold;color:"+color+"' onclick=\"viewDetail('"+$(this).attr("id")+"')\" >"+ $(this).attr("name")+"</a></b></td><td width='5%' >    <a href='#'  onclick=\"return removeBet('"+$(this).attr("id") +"' )\"  ><img  height='25' src='img/delete.png' /></a></td></tr>" );
+                                     
+                                     
+                 $(this).find("game").each(function() {
+                                           
+                    if (type == "straightWages") {
+                                          
+                    $('#'+type).append("<tr ><td colspan='3' ><div style='margin-left:10px'><b>Game:</b><br/>" + $(this).attr("a") + " <b>"+$(this).attr("as") + "</b>  @  "+ $(this).attr("h") + " <b>"+ $(this).attr("hs") +"</b></div></td></tr><tr><td colspan='3'><div style='margin-left:10px'><b>Schedule:</b><br/> "+$(this).attr("sch")+ "</div></td></tr><tr  ><td colspan='3' style='height:20%'></td></tr>");
+                                          
+                                           
+                        } else if (type == "parlay") {
+                        $('#'+type).append("<tr><td colspan='3' ><div style='margin-left:10px'><b>Game: </b><br/>" + $(this).attr("a") + " <b>"+$(this).attr("as") + "</b>  @  "+ $(this).attr("h") + " <b>"+ $(this).attr("hs") +"</b></div></td></tr><tr><td colspan='3'><div style='margin-left:10px'><b>Schedule:</b><br/> "+$(this).attr("sch")+ " ("+$(this).attr("stt")+")</div></td></tr><tr  ><td colspan='3'  style='height:20%;border-top:1px;border-top-style:solid;border-top-color:black'></td></tr>");
+                                           
+                                           
+                            }
+                                                
+                                              
+                                              
+                        });
+  			
+		    });
+		 
+		  });
+      
+      $('#scroller').show().trigger("updatelayout");
+
+   
+      if (count == 0) {
+          document.getElementById('message').style.display = "";
+      }
+  
+  } 
+    
+    
+    
+    function removeBet(betId)  {
+        
+       result = window.confirm("Remove Bet?")
+        
+        
+        if (result == true) {
+        
+        $.ajax({
+               type: 'POST',
+               data: "betId="+betId,
+               url: 'http://eyesbet.com/m.removeBet',
+               dataType: 'xml',
+              
+               success: function(xml){
+               alert("Bet removed successfully");
+               window.location= "displayBets.html";
+               
+               },
+               error: function(xhr, textStatus, error){
+               
+               alert(xhr.responseText);
+               window.location = "index.html";
+
+               }
+               });
+            
+            
+            return true;
+            
+        } else {
+            
+            
+            return false;
+        }
+        
+        
+        
+    }
+    
+    
+    function viewDetail(betId) {
+        $.ajax({
+               type: 'GET',
+               data: "betId="+betId,
+               url: "http://eyesbet.com/m.betDetail",
+               dataType: "xml",
+               
+               success: function (xml) {
+               
+               
+               
+               window.location = "viewDetail.html";
+               
+              
+               
+               
+               },
+               error: function(xhr, textStatus, error){
+               alert( xhr.responseText);
+               window.location = "index.html";
+
+               },
+               });
+        
+        
+        
+        
+    }
+    
+  
+ function validate() {
+    var check = false;
+    var checkedGames = "";
+    count =0;
+   
+ 	
+ 	
+ 	
+ 	games = document.getElementsByName("games");
+ 	for (i=0; i < games.length; i++) {
+ 	 
+ 	  if (games[i].checked) {
+ 		  count++;
+ 	  	check = true;
+ 	  	checkedGames = checkedGames + games[i].value+",";
+ 	  
+ 	  }  
+ 	}
+ 	
+ 	
+ 	if (check == false) {
+ 	   alert("You must select a game to continue");
+ 	   return false;
+ 	} else {
+ 		
+ 	   submitForm(checkedGames);
+ 	   return false;
+ 	}
+ 	
+ 	
+ 
+  }
+  
+  
+  function submitForm(games) {
+  
+  
+  	$.ajax({
+		type: 'POST',
+		data: "games="+games,
+		url: 'http://eyesbet.com/m.createBet',
+		dataType: 'xml',
+		beforeSend: function(xhr){
+            xhr.withCredentials=true;
+            },
+
+		success: function(xml){
+		
+			window.location = "enterBet.html";
+			
+		},
+		error: function(xhr, textStatus, error){
+			
+			alert(xhr.responseText);
+            window.location = "index.html";
+		}
+	});
+	
+   
+   
+  
+  }
+ 
+       function showLeague(league) {
+        
+           
+           
+        
+
+           for (var i=0; i < leagues.length; i++) {
+               table = document.getElementById(leagues[i])
+               if (leagues[i] != league) {
+                 
+                   table.style.display = "none";
+               } if (leagues[i] == league) {
+                   
+                   table.style.display = "inline";
+               }
+           }
+        
+        
+    } 
+    
+    
+    
+    
+    
+    
+    function logout() {
+        
+        $.ajax({
+               type: 'GET',
+               url: 'http://eyesbet.com/m.logout',
+               cache: false,
+               
+              
+               error: function(xhr, textStatus, error){
+               //alert( error);
+               },
+               }); 
+
+    
+
+        
+        window.location = "index.html";
+    }
+    
+    
+    function trackBets() {
+        
+        
+        /*if (document.getElementById('livegame').value == "false") {
+            
+            alert("No live games found");
+           
+        } else { */
+        
+        
+        window.location = "tracker.html";
+        
+    //}
+        
+        
+    }
+                  
+</script>
+<style>
+    
+    .ui-page {
+        
+        background:white;
+    }
+    </style>
+       
+
+
+</head>
+    <body >
+   
+    
+    <div data-role="page"   >
+        
+        
+        
+        
+        
+        
+        
+    
+    <div data-role="header" data-theme="a"  data-position="fixed" data-id="header"  data-tap-toggle="false" data-transition="none" >
+        <h1>My Bets</h1>
+        
+        <a href="#nav-panel" data-icon="bars" data-iconpos="left">Menu</a>
+   
+        
+        
+        
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+        <div style="display:block;margin-top:0px"  data-iscroll  data-role="content" >
+            
+            <div id="scroller" >
+            
+                    <div align="center" id="message" style="display:none;margin-top:20px" >
+                        
+                        
+                        No saved bets found. 
+                        
+                        <a style="margin-top:15px" data-icon="plus" href="javascript:window.location='displayLeagues.html';" onclick="createBet()" data-role="button" data-theme="a" > Create Bet </a>
+                    
+                    </div>
+                    
+                   <div id="div_straightWages" style="border-width:5px;border-style:solid;display:none">
+                       
+                       <div align="center" style="background-color:black;color:white;padding-top:2%;padding-bottom:2%"> Straight Wages Bets </div>
+                    
+                  <table style="font-size:smaller" width="100%"  celpadding="10" cellspacing="0" id="straightWages"  >
+                       
+                       
+                       
+                    </table>
+                    
+                   </div>
+                    
+                    
+             
+          
+          
+            
+                                   
+                    <div id="div_parlay" style="border-width:5px;border-style:solid;display:none;background-color:white;margin-top:15px">
+                        
+                         <div align="center" style="background-color:black;color:white;padding-top:2%;padding-bottom:2%"> Parlay Bets </div>
+
+                    <table style="font-size:smaller" width="100%"  style="background-color:white" celpadding="10" cellspacing="0" id="parlay"  >
+                        
+                        
+                        
+                    </table>
+                    
+                        </div>
+                    
+              
+                
+            
+            <input type="hidden" id="livegame" />
+                
+                
+        </div>
+
+           
+        </div>
+            
+            
+            
+            
+            
+        <div data-role="panel" data-position-fixed="true" style="background-color:black;" data-theme="a" id="nav-panel">
+            <ul data-role="listview" data-theme="a" class="nav-search">
+                <li data-icon="delete"><a href="#" data-rel="close">Close menu</a></li>
+                <li><a href="javascript:logout();"  >Sign Out</a></li>
+                <li > <a data-icon-pos="left"  href="javascript:window.location='tracker.html';"  > Streamer </a>  </li>
+                <li><a href="javascript:window.location='displayLeagues.html';"  >Create Bet</a></li>
+               
+            </ul>
+            
+           
+        </div><!-- /panel -->
+    
+    
+    
+    
+  
+        
+    </div>
+
+
+</body>
+</html>
