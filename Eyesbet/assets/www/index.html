@@ -1,42 +1,183 @@
-<!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
 <html>
     <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
-        </div>
-        <script type="text/javascript" src="cordova-2.7.0.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+        
+        
+        <script type="text/javascript"  src="cordova-2.4.0.js"></script>
+        
+        <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
+        
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+        
+        
+        
         <script type="text/javascript">
-            app.initialize();
-        </script>
+        
+    	window.alert(navigator.network.connection.type);
+
+            
+            var deviceInfo = function(){
+            	alert(navigator.network.connection.type);
+                if (navigator.network.connection.type == "none") {
+                    window.location = "noConnection.html";
+                }
+            }
+            
+        
+            document.addEventListener("deviceready", deviceInfo, true);
+        
+            
+            
+            
+            
+            function getLoginInfo() {
+                var remember = localStorage.getItem('rememberme');
+                if ( remember == 'true' ) {
+                    var username = localStorage.getItem('username');
+                    $('#username').val(username);
+                    $('#rememberme').attr('checked',true).checkboxradio('refresh');
+                }
+            }
+            
+            function login() {
+                $.mobile.showPageLoadingMsg();
+                
+                $('#password').blur();
+                rememberLogin();
+                username = document.getElementById("username").value;
+                pass = document.getElementById("password").value;
+                
+                
+                
+                $.ajax({
+                       type: 'POST',
+                       data: "username="+username+"&password="+pass,
+                       url: 'http://eyesbet.com/m.login',
+                       dataType: 'xml',
+                       
+                       
+                       success: function(xml){
+                       
+                       if(xml == null) {
+                       $.mobile.hidePageLoadingMsg();
+                       
+                       alert("Invalid username/password. Please try again");
+                       
+                       return false;
+                       } else {
+                       
+                       
+                       window.location = "landingPage.html";
+                       
+                       }
+                       
+                       },
+                       error: function(xhr, error, error2){
+                       
+                       alert(xhr.responseText);
+                       window.location = "index.html";
+                       
+                       }
+                       
+                       
+                       });
+                
+                
+                
+                return false;
+            }
+            
+            function rememberLogin() {
+                if ($('#rememberme').is(":checked")) {
+                    var username = $('#username').val();
+                    var password = $('#password').val();
+                    // set cookies to expire in 14 days
+                    localStorage.setItem('username', username);
+                    //localStorage.setItem('password', password);
+                    localStorage.setItem('rememberme', true);
+                } else {
+                    // reset cookies
+                    localStorage.setItem('username', null);
+                    //localStorage.setItem('password', null);
+                    localStorage.setItem('rememberme', null);
+                }
+                
+            }
+            
+            
+            
+            
+            
+            
+             
+            
+            
+            </script>
+        
+        <style>
+            .ui-page{
+                
+                background:white;
+            }
+            
+            </style>
+        
+    </head>
+    <body onload="getLoginInfo()">
+        
+        <div  data-role="page" >
+            
+            <div  data-role="header" >
+                
+                <h3> Sign In </h3>
+                
+            </div>
+            
+            
+            <div data-role="content" data-iscroll >
+                
+                <div align="center">
+                    <img src="img/eyebetsv3.jpg" alt="etyesbet logo" />
+                    
+                </div>
+                
+                
+                
+                <div style="margin-top:35px;">
+                    <div align="right" style="font-size:small;"  >
+                        <a  data-theme="a" style="color:darkred"  href="javascript:window.location='register.html';" >Register </a>
+                    </div>
+                    <form>
+                        <label for="username" class="ui-hidden-accessible">Username:</label>
+                        <input type="text" name="username" id="username" value="" placeholder="username" data-theme="a"/>
+                        <label for="password" class="ui-hidden-accessible">Password:</label>
+                        <input type="password" name="password" id="password" value="" placeholder="password" data-theme="a"/>
+                        
+                        
+                        
+                        <input type="checkbox"  id="rememberme" data-theme="a"  />
+                        <label for="rememberme">Remember Me</label>
+                        <div align="center" style="margin-top:30px">
+                            
+                            <button   data-theme="a"  data-icon="check" data-inline="true" onclick="return login()">Sign in</button>
+                            
+                        </div>
+                        
+                        
+                    </form>
+                </div>
+                
+                
+                
+            </div>
+            
+            
+            
+        </div>
+        
+        
+        
     </body>
 </html>
