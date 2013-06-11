@@ -45,19 +45,23 @@
     
      
      function parseBet(xml) {
-         betId = $(xml).find("xml").attr("betid");
-         
+    	 
+    	 $('#detail').empty();
+    	 xml = $(xml).find("xml");
+         betId = xml.attr("betid");
+         type =  xml.attr("type");
          document.getElementById('betid').value = betId;
          
          var status = "";
-         var h; var a; var hs; var as;
+         var h; var a; var hs; var as; var gameId;
+         $('#detail').append("<tr><td colspan='2' align='center' style='font-weight:bold'>"+xml.attr("name")+" <a href='#'>Edit</a></td></tr>");
          $(xml).find("game").each(function () {
                                             
                                   h = $(this).attr("h");
                                   a = $(this).attr("a");
                                   as = $(this).attr("as");
                                   hs = $(this).attr("hs");
-                                  
+                                  gameId = $(this).attr("id");
                                   
                     $(this).find("gamebet").each(function() {
                                 
@@ -67,15 +71,20 @@
                                                  
                          $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
                                                          
-                        $('#detail').append("<tr><td colspan='2'><img src='"+status+"' height='15px' /> <b>Money Line:</b> "+$(this).attr("moneyline")+ " </td></tr>");
-                                                 printLine();
+                         if (type == "parlay") { 
+	                         $('#detail').append("<tr><td ><img src='"+status+"' height='15px' /> <b>Money Line:</b> "+$(this).attr("moneyline")+ " </td><td align='right'><a href='#' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','mn')\" ><img src='img/delete.png'/> </a> </td></tr>");
+	                                                 printLine();
+                            } else {
+                            	  $('#detail').append("<tr><td colspan='2' ><img src='"+status+"' height='15px' /> <b>Money Line:</b> "+$(this).attr("moneyline")+ " </td></tr>");
+                                  printLine();
+                            }
                                                          
                             }  if ( $(this).attr("ispoints") == "true" ) {
                                                  
-                                                 status = getStatus($(this).attr("spreadpointstt"));
+                                 status = getStatus($(this).attr("spreadpointstt"));
                                  $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
                                                  
-                                $('#detail').append("<tr> <td colspan='2'><img src='"+status+"' height='15px'/> <b>Point Spread: </b> "+$(this).attr("spreadpointteam") + ": "+ $(this).attr("spreadpointsign") +"</td></tr>");
+                                $('#detail').append("<tr> <td ><img src='"+status+"' height='15px'/> <b>Point Spread: </b> "+$(this).attr("spreadpointteam") + ": "+ $(this).attr("spreadpointsign") +"</td><td align='right'> <a href='#' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','sp')\" > <img src='img/delete.png'/> </a> </td></tr>");
                                    
                                                  printLine();
                                                  
@@ -84,7 +93,7 @@
                                                  status = getStatus($(this).attr("oustt"));
                                  $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
                                 
-                                  $('#detail').append("<tr> <td colspan='2'><img src='"+status+"' height='15px'/> <b>Under: </b> "+$(this).attr("underpoints") + "</td></tr>");
+                                  $('#detail').append("<tr> <td ><img src='"+status+"' height='15px'/> <b>Under: </b> "+$(this).attr("underpoints") + "</td><td align='right'> <a href='' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','ou')\" ><img src='img/delete.png'/></a> </td></tr>");
                                                  printLine();
 
          
@@ -94,7 +103,7 @@
                                   $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
 
          
-                                    $('#detail').append("<tr> <td colspan='2'><img src='"+status+"' height='15px' /> <b>Over: </b> "+$(this).attr("overpoints") + "</td></tr>");
+                                    $('#detail').append("<tr> <td ><img src='"+status+"' height='15px' /> <b>Over: </b> "+$(this).attr("overpoints") + "</td><td align='right'> <a href=''onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','ou')\" ><img src='img/delete.png'/> </a> </td></tr>");
                                                  
                                                  printLine();
 
@@ -168,7 +177,7 @@
      
      function deleteBet( ) {
          
-         result = window.confirm("Remove Bet?")
+         result = window.confirm("Delete Bet?")
          
          
          if (result == true) {
@@ -200,9 +209,53 @@
              return false;
          }
          
-         
-         
-         
+
+     }
+     
+     function deleteGamebet(betId, gameId, type) {
+    	 
+    	 
+
+    	 
+    	  result = window.confirm("Delete Bet?")
+          
+          
+          if (result == true) {
+              $.mobile.showPageLoadingMsg();
+
+              $.ajax({
+                     type: 'POST',
+                     data: "betId="+betId+"&gameId="+gameId+"&type="+type+"&cmd=deleteParlay",
+                     url: 'http://eyesbet.com/m.editBet',
+                     dataType: 'xml',
+                     
+                     success: function(xml){
+                    
+                    	 parseBet(xml);
+                         $.mobile.hidePageLoadingMsg();
+
+                     },
+                     error: function(xhr, textStatus, error){
+                        $.mobile.hidePageLoadingMsg();
+
+                     alert(error);
+                     
+                     
+                     }
+                     });
+              
+              
+              return true;
+              
+          } else {
+              
+              
+              return false;
+          }
+          
+    	 
+    	 
+    	 
      }
  
  </script>
@@ -218,11 +271,7 @@
             
             
             <h1>Bet Detail</h1>
-            
-            
-            
-            
-            
+   
         </div>
     
  <div data-role="content" data-iscroll >
@@ -231,13 +280,22 @@
      <div id="scroller">
          
          
+         <div align="center" > 
+          <fieldset    data-role="controlgroup" data-type="horizontal" >
+           <a href="#" id="betid" onclick="deleteBet()" data-inline="true" data-iconpos="left" data-icon="delete" data-theme="a" data-role="button" > Delete All </a>
+             <a href="#"   data-inline="true" data-icon="add" data-theme="a" data-iconpos="right" data-role="button" > Add New </a>
+           </fieldset>
+         </div>
+         
+         
          <table style="margin-top:20px;width:100%" id="detail" cellpadding="3" >
              
             
              
         </table>
+        
           <input type="hidden"  id="betid" value="" />
-         <a href="#" id="betid" onclick="deleteBet()" data-icon="delete" data-theme="a" data-role="button" > Delete Bet </a>
+       
          
          
     </div>
@@ -251,7 +309,7 @@
             
             
             
-            <button  data-theme="a" onclick="history.back()" data-icon="arrow-l" data-iconpos="left" data-inline="true" >Back</button>
+            <button  data-theme="a" onclick="javascript:window.location='displayBets.html'" data-icon="arrow-l" data-iconpos="left" data-inline="true" >Back</button>
             
             
         </div>

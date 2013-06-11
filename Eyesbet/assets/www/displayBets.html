@@ -79,7 +79,7 @@ $.ajax({
                                      
                                      
                                      
-                $('#'+type).append("<tr style='background-color:lightgray;font-weight:bolder'><td></td><td height='30%'>"+statusimg+"  <b><a href='' style='font-weight:bold;color:"+color+"' onclick=\"viewDetail('"+$(this).attr("id")+"')\" >"+ $(this).attr("name")+"</a></b></td><td width='5%' >    <a href='#'  onclick=\"return removeBet('"+$(this).attr("id") +"' )\"  ><img  height='25' src='img/delete.png' /></a></td></tr>" );
+                $('#'+type).append("<tr style='background-color:lightgray;font-weight:bolder'><td></td><td height='30%'>"+statusimg+"  <b><a href='#' style='font-weight:bold;color:"+color+"' onclick=\"viewDetail('"+$(this).attr("id")+"')\" >"+ $(this).attr("name")+"</a></b></td><td width='5%' >    <a href='#'  onclick=\"return removeBet('"+$(this).attr("id") +"' )\"  ><img  height='25' src='img/delete.png' /></a></td></tr>" );
                                      
                                      
                  $(this).find("game").each(function() {
