@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
-<title>Eyesbet</title>
+<title>Eyesbet My Bets</title>
     <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
     <link rel="stylesheet" href="css/jquery-mobile-iscrollview.css"/>
@@ -18,10 +18,10 @@
     
 $(document).ready(function() {
 
-$.mobile.showPageLoadingMsg('a',"Loading...",true);
+$.mobile.showPageLoadingMsg();
 
 $.ajax({
-        type: 'GET',
+        type: 'POST',
         url: "http://eyesbet.com/m.displayBets",
         dataType: "xml",
         
@@ -155,23 +155,26 @@ $.ajax({
     
     
     function viewDetail(betId) {
+    	$.mobile.showPageLoadingMsg();
+
         $.ajax({
                type: 'GET',
-               data: "betId="+betId,
-               url: "http://eyesbet.com/m.betDetail",
-               dataType: "xml",
+               url: 'http://eyesbet.com/m.betDetail?betId='+betId,
+               dataType: 'xml',
                
                success: function (xml) {
                
                
                
-               window.location = "viewDetail.html";
+              	 window.location = "viewDetail.html";
                
               
-               
+                
                
                },
                error: function(xhr, textStatus, error){
+            	   $.mobile.hidePageLoadingMsg();
+
                alert( xhr.responseText);
                window.location = "index.html";
 
@@ -275,7 +278,7 @@ $.ajax({
     function logout() {
         
         $.ajax({
-               type: 'GET',
+               type: 'POST',
                url: 'http://eyesbet.com/m.logout',
                cache: false,
                
@@ -333,7 +336,7 @@ $.ajax({
         
         
     
-    <div data-role="header" data-theme="a"  data-position="fixed" data-id="header"  data-tap-toggle="false" data-transition="none" >
+    <div data-role="header" data-theme="a"  data-position="fixed" data-id="header"   >
         <h1>My Bets</h1>
         
         <a href="#nav-panel" data-icon="bars" data-iconpos="left">Menu</a>
