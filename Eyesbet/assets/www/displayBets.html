@@ -67,19 +67,19 @@ $.ajax({
                                      if ( betStatus == "LOST" ) {
                                      
                                      color = "darkred";
-                                     statusimg = "<img src='img/cancel.png' height='15px' />"; 
+                                    // statusimg = "<img src='img/cancel.png' height='15px' />"; 
                                      
                                      } else if(betStatus == "WON") {
                                         color = "darkgreen";
-                                        statusimg = "<img src='img/ok.png' height='15px' />";
+                                        //statusimg = "<img src='img/ok.png' height='15px' />";
                                      } else {
                                         color = "black";
-                                        statusimg = "";
+                                       // statusimg = "";
                                      }
                                      
                                      
                                      
-                $('#'+type).append("<tr style='background-color:lightgray;font-weight:bolder'><td></td><td height='30%'>"+statusimg+"  <b><a href='#' style='font-weight:bold;color:"+color+"' onclick=\"viewDetail('"+$(this).attr("id")+"')\" >"+ $(this).attr("name")+"</a></b></td><td width='5%' >    <a href='#'  onclick=\"return removeBet('"+$(this).attr("id") +"' )\"  ><img  height='25' src='img/delete.png' /></a></td></tr>" );
+                $('#'+type).append("<tr style='background-color:lightgray;font-weight:bold;font-size:medium;'><td></td><td height='50%' style='margin-left:5px'>  <b><a href='#' style='font-weight:bold;color:"+color+"' onclick=\"viewDetail('"+$(this).attr("id")+"')\" >"+ $(this).attr("name")+"</a></b></td><td width='5%' >    <a href='#'  onclick=\"return removeBet('"+$(this).attr("id") +"' )\"  ><img  height='25' src='img/delete.png' /></a></td></tr>" );
                                      
                                      
                  $(this).find("game").each(function() {
@@ -339,7 +339,7 @@ $.ajax({
     <div data-role="header" data-theme="a"  data-position="fixed" data-id="header"   >
         <h1>My Bets</h1>
         
-        <a href="#nav-panel" data-icon="bars" data-iconpos="left">Menu</a>
+        <a href="#nav-panel"  >Menu</a>
    
         
         
@@ -370,7 +370,7 @@ $.ajax({
                        
                        <div align="center" style="background-color:black;color:white;padding-top:2%;padding-bottom:2%"> Straight Wages Bets </div>
                     
-                  <table style="font-size:smaller" width="100%"  celpadding="10" cellspacing="0" id="straightWages"  >
+                  <table style="font-size:small" width="100%"  celpadding="10" cellspacing="0" id="straightWages"  >
                        
                        
                        
@@ -417,7 +417,8 @@ $.ajax({
                 <li><a href="javascript:logout();"  >Sign Out</a></li>
                 <li > <a data-icon-pos="left"  href="javascript:window.location='tracker.html';"  > Streamer </a>  </li>
                 <li><a href="javascript:window.location='displayLeagues.html';"  >Create Bet</a></li>
-               
+               	 <li><a href="#"  >Edit User Profile</a></li>
+               	
             </ul>
             
            

@@ -613,7 +613,7 @@
     <style>
         .ui-page {
             
-            background-color: black;
+            background:black;
         }
         
         </style>
@@ -624,11 +624,11 @@
     <div data-role="page"  >
         
         
-       <div data-role="header"  data-position="fixed" data-tap-toggle="false" data-transition="none" data-id="header" >
+       <div data-role="header"  data-position="fixed"  >
  
             <h2>Streamer</h2>
             
-            <a href="#nav-panel" data-icon="bars" data-iconpos="left">Menu</a>
+            <a href="#nav-panel" >Menu</a>
             
                 <select style="display:none" id="selectBet" data-theme="a" onchange="trackBet();"   >
                     <option value="">Select a bet to continue </option>
@@ -654,7 +654,7 @@
 </div>
      
      
-     <div align="center" data-theme="a" data-role="footer" data-position="fixed" data-id="footer"  data-tap-toggle="false" data-transition="none" >
+     <div align="center" data-theme="a" data-role="footer" data-position="fixed"    >
      
      
      
@@ -670,7 +670,7 @@
      <li><a href="javascript:logout();"   >Sign Out</a></li>
      <li><a href="javascript:window.location='displayBets.html';" >My Bets</a></li>
      <li><a href="javascript:window.location='displayLeagues.html';"  >Create Bet</a></li>
-     
+      <li><a href="#"  >Edit User Profile</a></li>
      </ul>
      </div>
 </div>

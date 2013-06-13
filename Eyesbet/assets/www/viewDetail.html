@@ -53,69 +53,68 @@
          betId = xml.attr("betid");
          type =  xml.attr("type");
          document.getElementById('betid').value = betId;
-         
+         parlay = false;
+         if (type == "parlay") {
+        	 parlay = true;
+         }
          var status = "";
-         var h; var a; var hs; var as; var gameId;
-         $('#detail').append("<tr><td colspan='2' align='center' style='font-weight:bold'><div style='background-color:lightgray;height:20px'> "+xml.attr("name")+" <a href='#dialogPage' data-transition='slidedown'  data-rel='dialog'>Change</a> </div>  </td></tr>");
+         var h; var a; var hs; var as; var gameId; var bet; var game; var gamebet; var color="black";
+         $('#detail').append("<tr><td  colspan='2'  style='font-weight:bold;margin-left:5px;'> <span id='mybetname' >"+xml.attr("name")+"</span> <a href='#dialogPage' style='font-size:small' data-transition='slidedown'  data-rel='dialog'>(Edit)</a> </td></tr>");
          $(xml).find("game").each(function () {
-                                            
-                                  h = $(this).attr("h");
-                                  a = $(this).attr("a");
-                                  as = $(this).attr("as");
-                                  hs = $(this).attr("hs");
-                                  gameId = $(this).attr("id");
+                                  game = $(this);           
+                                  h = game.attr("h");
+                                  a = game.attr("a");
+                                  as = game.attr("as");
+                                  hs = game.attr("hs");
+                                  gameId = game.attr("id");
                                   
                     $(this).find("gamebet").each(function() {
-                                
-                      if ($(this).attr("ismoneyline") == "true") {
+                          gamebet = $(this);      
+                      if  (gamebet.attr("ismoneyline") == "true") {
                                          
-                        status = getStatus($(this).attr("moneylinestt"));
-                                                 
+                        status = getStatus(gamebet.attr("moneylinestt"));
+                         //color = getColor(gamebet.attr("moneylinestt")) ;                       
                          $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
+                                                        
+                       			printBet(parlay, gamebet.attr("moneyline"), "Money Line: ", "mn", status, gameId,color);
+                       			printLine();
                                                          
-                         if (type == "parlay") { 
-	                         $('#detail').append("<tr><td ><img src='"+status+"' height='15px' /> <b>Money Line:</b> "+$(this).attr("moneyline")+ " </td><td align='right'><a href='#' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','mn')\" ><img src='img/delete.png'/> </a> </td></tr>");
-	                                                 printLine();
-                            } else {
-                            	  $('#detail').append("<tr><td colspan='2' ><img src='"+status+"' height='15px' /> <b>Money Line:</b> "+$(this).attr("moneyline")+ " </td></tr>");
-                                  printLine();
-                            }
-                                                         
-                            }  if ( $(this).attr("ispoints") == "true" ) {
-                                                 
-                                 status = getStatus($(this).attr("spreadpointstt"));
+                            }  if ( gamebet.attr("ispoints") == "true" ) {
+                                  //color = getColor(gamebet.attr("spreadpointstt")) ;             
+                                 status = getStatus(gamebet.attr("spreadpointstt"));
                                  $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
-                                                 
-                                $('#detail').append("<tr> <td ><img src='"+status+"' height='15px'/> <b>Point Spread: </b> "+$(this).attr("spreadpointteam") + ": "+ $(this).attr("spreadpointsign") +"</td><td align='right'> <a href='#' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','sp')\" > <img src='img/delete.png'/> </a> </td></tr>");
+                                  bet = gamebet.attr("spreadpointteam") + ": " + gamebet.attr("spreadpointsign");               
+                                 printBet(parlay, bet, "Point Spread: ", "sp", status, gameId,color); 
                                    
                                                  printLine();
                                                  
                                                  
-                                } if ( $(this).attr("isoverunder") == "true" && $(this).attr("isunder") == "true"  ) {
-                                                 status = getStatus($(this).attr("oustt"));
+                                } if ( gamebet.attr("isoverunder") == "true" && gamebet.attr("isunder") == "true"  ) {
+                                				 //color = getColor(gamebet.attr("oustt"));
+                                                 status = getStatus(gamebet.attr("oustt"));
                                  $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
                                 
-                                  $('#detail').append("<tr> <td ><img src='"+status+"' height='15px'/> <b>Under: </b> "+$(this).attr("underpoints") + "</td><td align='right'> <a href='' onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','ou')\" ><img src='img/delete.png'/></a> </td></tr>");
+                                      printBet(parlay,gamebet.attr("underpoints"), "Under: ","ou", status, gameId,color);
                                                  printLine();
 
          
-                                } else if ( $(this).attr("isoverunder") == "true" && $(this).attr("isunder") == "false" ) {
-                                                 
-                                                 status = getStatus($(this).attr("oustt"));
+                                } else if ( gamebet.attr("isoverunder") == "true" && gamebet.attr("isunder") == "false" ) {
+                                	 //color = getColor(gamebet.attr("oustt"));
+                                                 status = getStatus( gamebet.attr("oustt"));
                                   $('#detail').append("<tr><td colspan='2'>"+ a + " " + as +   " @ " + h + " " + hs + "</td></tr>");
 
          
-                                    $('#detail').append("<tr> <td ><img src='"+status+"' height='15px' /> <b>Over: </b> "+$(this).attr("overpoints") + "</td><td align='right'> <a href=''onclick=\"return deleteGamebet('"+betId+"','"+gameId+"','ou')\" ><img src='img/delete.png'/> </a> </td></tr>");
+                                   printBet(parlay, gamebet.attr("overpoints"), "Over: ","ou", status, gameId, color);
                                                  
-                                                 printLine();
+                                     printLine();
 
          
-                                    }   
+                             }   
          
                                                          
-                                    });
+                      });
                                   
-                                  });
+          });
          
          
          $('#scroller').show().trigger("updatelayout");
@@ -123,10 +122,43 @@
          
      }
      
+     function getColor(status) {
+    	 color = "";
+    	 if (status == "WON") {
+    		 
+    		 color = "green";
+    		 
+    	 } else if (status == "LOST") {
+    		 
+    		 color = "darkred";
+    	 } else {
+    		 
+    		 color = "white";
+    	 }
+    	 
+    	 
+    	 return color;
+    	 
+     } 
+     
+     function printBet(parylay, bet, text, type, status, gameId, color) {
+		  
+    	  if (parlay == true) {
+          
+          $('#detail').append("<tr> <td ><img src='"+status+"' height='15px'  /> <b>"+text+" </b> " +bet + "</td><td align='right' style='color:"+color+"' > <a href=''onclick=\"return deleteGamebet('"+gameId+"','"+type+"')\" ><img src='img/delete.png'/> </a> </td></tr>");
+    	  
+    	  } else {
+    		  $('#detail').append("<tr> <td style='color:"+color+"' ><img src='"+status+"' height='15px' /> <b>"+text+" </b> " +bet+ "</td></tr>");
+    		  
+    		  
+    	  }
+    	 
+     }
+     
      
      function printLine()    {
          
-          $('#detail').append("<tr><td colspan='2' style='border-top-width:1px;border-top-style:solid;border-top-color:black' > </td></tr>");
+          $('#detail').append("<tr><td colspan='2' style='border-top-width:2px;border-top-style:solid;border-top-color:black' > </td></tr>");
          
      }
      
@@ -214,13 +246,13 @@
 
      }
      
-     function deleteGamebet(betId, gameId, type) {
+     function deleteGamebet( gameId, type) {
     
     	  result = window.confirm("Delete Bet?")
   
           if (result == true) {
               $.mobile.showPageLoadingMsg();
-
+			  betId = document.getElementById("betid").value;
               $.ajax({
                      type: 'GET',
                      data: "betId="+betId+"&gameId="+gameId+"&type="+type+"&cmd=deleteParlay",
@@ -260,9 +292,58 @@
     	 
     	 window.location="displayBets.html";
      }
+     
+     
+     function changeName() {
+    	 
+    	 name = document.getElementById("betName").value;
+    	 
+    	 if (isBlank(name)) {
+    		 alert("Invalid Name");
+    		 return false;
+    	 } else {
+             $.mobile.showPageLoadingMsg();
+
+    		  betId = document.getElementById("betid").value;
+    		  
+    		  $.ajax({
+                  type: 'GET',
+                  data: "betId="+betId+"&name="+name+"&cmd=changeName",
+                  url: 'http://eyesbet.com/m.editBet',
+                  dataType: 'xml',
+                  
+                  success: function(xml){
+                 
+                    window.location.reload();
+                     $.mobile.hidePageLoadingMsg();
+
+                  },
+                  error: function(xhr, textStatus, error){
+                     $.mobile.hidePageLoadingMsg();
+
+                  alert(xhr.responseText);
+                  
+                  
+                  }
+                  });
+    		 
+    		 return true;
+    	 }
+    	 
+     }
+     
+     function isBlank(str) {
+    	    return (!str || /^\s*$/.test(str));
+    	}
  
  </script>
   
+  <style>
+   .ui-page{
+     background:white;
+   }
+  
+  </style>
 
 </head>
 <body>
@@ -271,9 +352,11 @@
         
         
         <div data-role="header" data-theme="a"  data-position="fixed">
+  <a href="#" id="betid" onclick="deleteBet()" data-inline="true"   data-theme="a" data-role="button" > Delete Bet </a>
             
             
             <h1>Bet Detail</h1>
+    <a href="#"   data-inline="true" data-theme="a"  data-role="button" > Add New </a>
    
         </div>
     
@@ -281,25 +364,13 @@
  
     
      <div id="scroller">
-         
-         
-         <div align="center" > 
-          <fieldset    data-role="controlgroup" data-type="horizontal" >
-           <a href="#" id="betid" onclick="deleteBet()" data-inline="true" data-iconpos="left" data-icon="delete" data-theme="a" data-role="button" > Delete All </a>
-             <a href="#"   data-inline="true" data-icon="add" data-theme="a" data-iconpos="right" data-role="button" > Add New </a>
-           </fieldset>
-         </div>
-         
-         
-         <table style="margin-top:20px;width:100%" id="detail" cellpadding="3" >
-             
-            
-             
+  
+         <table style="width:100%;margin-top:15px;" id="detail" cellspacing="0" cellpadding="3" >
+      
         </table>
         
           <input type="hidden"  id="betid" value="" />
        
-         
          
     </div>
      
@@ -322,12 +393,12 @@
 
 <div data-role="page" id="dialogPage">
 <div data-role="header">
-<h2>Edit Bet Name</h2>
+<h2>Change Bet Name</h2>
 </div>
 <div data-role="content">
- Enter new name: <input type="text" name="betName" />
+ New name: <input type="text" id="betName" name="betName" />
  <br/>
-  <a href="#" onclick=""  data-iconpos="left" data-icon="delete" data-theme="a" data-role="button" > Submit </a>
+  <a href="#" onclick="return changeName()"   data-theme="a" data-role="button" > Submit</a>
  
 </div>
 </div>

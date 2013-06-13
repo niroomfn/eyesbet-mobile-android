@@ -3,21 +3,23 @@
 
 <html>
 <head>
-        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
 <title>Eyesbet Fixtures</title>
 
-  
-        
-      <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
-      <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
-        
-      <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-      <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+ <link rel="stylesheet" href="css/themes/eyesbet_1.min.css" />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
+    
+ <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+     <script src="http://code.jquery.com/mobile/1.3.0/jquery.mobile-1.3.0.min.js"></script>
+     
+     <link rel="stylesheet" href="css/jquery-mobile-iscrollview.css"/>
+    <script src="js/iscroll.js"></script>
+    <script src="js/jquery-mobile-iscrollview.js"></script>
     
 <script type="text/javascript">
 
-    var leagues = ["NBA","NFL","MLB","NHL"];
+ var leagues = ["NBA","NFL","MLB","NHL"];
     
     
 $(document).ready(function() {
@@ -126,13 +128,14 @@ $.ajax({
   }
   
  function validate() {
+	 
+	 $.mobile.showPageLoadingMsg();
+ 
     var check = false;
     var checkedGames = "";
     count =0;
    
- 	
- 	
- 	
+	
  	games = document.getElementsByName("games");
  	for (i=0; i < games.length; i++) {
  	 
@@ -146,11 +149,15 @@ $.ajax({
  	
  	
  	if (check == false) {
+ 		$.mobile.hidePageLoadingMsg();
+
  	   alert("You must select a game to continue");
  	   return false;
  	} else {
  		
  	   submitForm(checkedGames);
+		$.mobile.hidePageLoadingMsg();
+
  	   return false;
  	}
  	
@@ -264,12 +271,7 @@ $.ajax({
     	background:white;
     }       
             
-   .ui-footer {
-    position: absolute !important;
-    bottom: 0;
-    width: 100%;
-}
-        
+
         
     </style>
 
@@ -298,13 +300,16 @@ $.ajax({
     
     
     
-    
-        <div data-role="content"  >
+        <div data-role="content" data-iscroll >
             
+            <div  id="scroller" >
             <div align="center">
                     <img src="img/eyebetsv3.jpg" alt="etyesbet logo" />
                     
                 </div>
+                
+                
+                <form>
                 
           <div id="NBA" style="display:none" align="center"   >
               
@@ -326,8 +331,9 @@ $.ajax({
             </div>
             
             
+            </form>
                 
-            
+            </div>
 
             
             
@@ -349,10 +355,10 @@ $.ajax({
        
         
         
-        <div data-role="controlgroup" data-type="horizontal"  data-mini="true">
-            <a href="#" data-role="button" data-icon="plus" onclick="return validate()" data-theme="a">Create Bet</a>
-            <a href="#" data-role="button" data-icon="delete" onclick="history.back()" data-theme="a">Cancel</a>
-        </div>
+        
+            <a href="#" data-role="button"  onclick="return validate()" data-theme="a">Create Bet</a>
+            <a href="#" data-role="button"  onclick="history.back()" data-theme="a">Cancel</a>
+        
         
         
         
