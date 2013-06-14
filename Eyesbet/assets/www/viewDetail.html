@@ -54,12 +54,15 @@
          type =  xml.attr("type");
          document.getElementById('betid').value = betId;
          parlay = false;
+         color = getColor(xml.attr("st"));
          if (type == "parlay") {
         	 parlay = true;
          }
          var status = "";
-         var h; var a; var hs; var as; var gameId; var bet; var game; var gamebet; var color="black";
-         $('#detail').append("<tr><td  colspan='2'  style='font-weight:bold;margin-left:5px;'> <span id='mybetname' >"+xml.attr("name")+"</span> <a href='#dialogPage' style='font-size:small' data-transition='slidedown'  data-rel='dialog'>(Edit)</a> </td></tr>");
+         var h; var a; var hs; var as; var gameId; var bet; var game; var gamebet;
+         $('#titleBetname').html( xml.attr("name"));
+         document.getElementById("titleBetname").style.color = color;
+         color = "black";
          $(xml).find("game").each(function () {
                                   game = $(this);           
                                   h = game.attr("h");
@@ -359,12 +362,22 @@
     <a href="#"   data-inline="true" data-theme="a"  data-role="button" > Add New </a>
    
         </div>
+        
+        
     
  <div data-role="content" data-iscroll >
  
     
      <div id="scroller">
-  
+     
+       <div  style="font-weight:bold;margin-top:5px;margin-bottom:20px;" >  
+       
+       
+       <span id="titleBetname" style="font-weight:bold" > </span> 
+       
+       
+       <a href="#dialogPage" data-role="button"  data-transition='slidedown'  data-rel='dialog' data-theme="a" data-iconpos="notext" data-icon="edit" data-inline="true" ></a></div>
+  		
          <table style="width:100%;margin-top:15px;" id="detail" cellspacing="0" cellpadding="3" >
       
         </table>
@@ -391,7 +404,7 @@
      
 </div>
 
-<div data-role="page" id="dialogPage">
+<div data-role="page" id="dialogPage" style="background:black">
 <div data-role="header">
 <h2>Change Bet Name</h2>
 </div>

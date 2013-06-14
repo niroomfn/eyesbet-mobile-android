@@ -339,7 +339,7 @@ $.ajax({
     <div data-role="header" data-theme="a"  data-position="fixed" data-id="header"   >
         <h1>My Bets</h1>
         
-        <a href="#nav-panel"  >Menu</a>
+        <a href="#nav-panel" data-icon="bars" data-iconpos="left"  >Menu</a>
    
         
         
@@ -357,12 +357,12 @@ $.ajax({
             
             <div id="scroller" >
             
-                    <div align="center" id="message" style="display:none;margin-top:20px" >
+                 <div align="center" id="message" style="display:none;margin-top:20px;font-weight:bold" >
                         
                         
                         No saved bets found. 
                         
-                        <a style="margin-top:15px" data-icon="plus" href="javascript:window.location='displayLeagues.html';" onclick="createBet()" data-role="button" data-theme="a" > Create Bet </a>
+                   <a style="margin-top:15px" data-icon="plus" href="javascript:window.location='displayLeagues.html';" onclick="createBet()" data-role="button" data-theme="a" > Create Bet </a>
                     
                     </div>
                     
