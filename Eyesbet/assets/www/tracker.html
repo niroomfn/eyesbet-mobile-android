@@ -19,12 +19,50 @@
 
  <script type="text/javascript">
      
+     $( window ).on( "orientationchange", function( event ) {
+                    
+                    if (event.orientation == "landscape") {
+                    
+                    $('#landscape_content').html($("#tracker").html());
+
+                    
+                    $("#tracker").html("");
+                    rows = $("#mytable tr").length;
+                    for (var i=0; i < rows; i++) {
+                    
+                        $("#qt_"+i).css("display","");
+                    
+                    }
+                    
+                    $("#status").html("Status");
+                    $("#betScore").html("Bet Score");
+                    
+                   $.mobile.changePage( $("#landscape_page"));
+                    
+                    } else {
+                    
+                    
+                        $("#tracker").html( $("#landscape_content").html());
+
+                        $("#landscape_content").html("");
+                    
+                        $("#status").html("ST");
+                        $("#betScore").html("BS");
+
+                        $.mobile.changePage( "#page_1");
+
+
+                    
+                    }
+                    
+        });
+     
      
      var timerId = 0;
    
      $(document).ready(function() {
                        
-                       $.mobile.showPageLoadingMsg('a',"Loading...",true);
+                       $.mobile.showPageLoadingMsg();
                        
                        $.ajax({
                               type: 'GET',
@@ -51,12 +89,13 @@
      
      
      function parseSortedGames(games) {
-         
+         $('#tracker').append("<div align='center' >" );
+
          games.find("game").each(function () {
                 game = $(this);
              
             array = game.attr("bets").split(";");
-               bets= "<div style='padding-left:5%'>";
+               bets= "<div style='padding-left:10%'>";
              
                                  for (var i=0; i < array.length; i++) {
                                    bets =bets + "<a style='color:darkblue' href=\"javascript:trackBet('"+game.attr("bid")+"')\">"+array[i]+"</a><br/>";
@@ -64,14 +103,15 @@
                                  }
            bets = bets +"</div>";
              
-             html = "<div style='background-color:lightgray;padding-left:5px;padding-right:5px;padding-top:5px;padding-bottom:5px;border-style:solid;border-width:2px;border-color:darkred;margin-top:10px;' ><center><b>"+game.attr("g")+"</b><br/><span style='font-size:small'>"+game.attr("st")+"</span></center><hr><b>Associated Bets</b> <br/>"+bets+" </div>";
+             html =  "<div  style='margin-left:10px;margin-right:10px;background-color:lightgray;padding-left:5px;padding-right:5px;padding-top:5px;padding-bottom:5px;border-style:solid;border-width:2px;border-color:white;margin-top:10px;' ><center><b>"+game.attr("g")+"</b><br/><span style='font-size:small'>"+game.attr("st")+"</span></center><hr/><div style='margin-left:5px'><b>Associated Bets</b> <br/>"+bets+"</div> </div>";
                                  
             $('#tracker').append(html );
-            $('#tracker').show().trigger("updatelayout");                     
                                  
         });
          
-         
+         $("#tracker").append("</div>")
+         $('#tracker').show().trigger("updatelayout");                     
+
      }
      
      
@@ -175,25 +215,17 @@
              } else {
                  e.style.color = "darkred";
              }
-         
-         
-        
-         
+
          //update bet type color
          
-         
         if (betType == "sp" || betType == "ou" ) {
-            
-            
             team = gamebet.attr("team");
             
             if (typeof team == 'undefined') {
                 team = "-";
                 
             }
-            
-            
-            
+
             bid = gamebet.attr("bid");
              
               bt = document.getElementById(bid+"_bt");
@@ -229,19 +261,11 @@
             gamebet = $(this);
             updateTeamScores(gamebet);
            updateLiveBetStatus(gamebet);
-                              
-             
-                     
-                                                    
-                                                    
-                                                    
-                                                    
+                                     
         });
          
      }
-                              
-                              
-                              
+                   
      
      function liveGameParser() {
          $.ajax({
@@ -279,7 +303,7 @@
                                  
             s.options[s.options.length]= new Option($(this).attr("n"), $(this).attr("v"));
                                  
-                                 } );
+            } );
          
          
      }
@@ -374,36 +398,36 @@
          gamebet = null;
          bscolor = "";
          
-        if (  betStatus == "WON") {
+         if (  betStatus == "WON") {
              bscolor="darkgreen";
-
+             
          } else if (betStatus == "LOST") {
              
              bscolor = "darkred";
-
+             
          } else { bscolor = "black";}
          
          awayColor = "";
          homeColor = "";
          gbsColor = "";
          bgcolor = "";
-         header = "<div align='center' style='font-size:medium;font-weight:bold;margin-bottom:10px'><hr/>"+displayType+": <span  style='font-weight:bold;color:"+bscolor+"'> "+betStatus+"</span><hr/></div>"
+         header = "<div align='center' style='font-size:medium;font-weight:bold;margin-bottom:10px'><hr/>"+displayType+": <span  style='font-weight:bold;color:"+bscolor+"'> "+betStatus+"</span></div>"
          
          div.append(header);
          
-         table =  "<table  cellpadding='2' cellspacing='0'  width='100%' style='font-size:medium;margin-bottom:20px;border-width:3px;border-style:solid;border-color:black'><tr style='background-color:black;color:white' ><td>Game</td><td>Team</td><td>Staus</td></tr>";
+         table =  "<table  cellpadding='3' cellspacing='0'  width='100%' style='font-size:medium;margin-bottom:20px;border-width:3px;border-style:solid;border-color:black'><tr style='background-color:black;color:white' ><td>Game</td><td>Score</td><td>Team</td><td align='center'>Staus</td></tr>";
          xml.find("gamebet").each(function () {
-        gamebet = $(this);
-       
-    
-         as = toNumber(gamebet.attr("as"));
-         hs = toNumber(gamebet.attr("hs"));
-         bs = gamebet.attr("s");
-        bgcolor = liveGameColors(gamebet.attr("live"));
+                                  gamebet = $(this);
                                   
-          
-                                
-                                
+                                  
+                                  as = toNumber(gamebet.attr("as"));
+                                  hs = toNumber(gamebet.attr("hs"));
+                                  bs = gamebet.attr("s");
+                                  bgcolor = liveGameColors(gamebet.attr("live"));
+                                  
+                                  
+                                  
+                                  
                                   if (bs == "WON") {
                                   gbsColor = "darkgreen";
                                   } else if (bs == "LOST") {
@@ -413,34 +437,30 @@
                                   bs = "<img  src='img/gameloading.gif' />";
                                   }
                                   
-         if (as > hs) {
-             awayColor = "darkgreen";
-             homeColor = "darkred";
-         }else if (as < hs ) {
-             
-             awayColor = "darkred";
-             homeColor = "darkgreen";
-         }
-         
-        
-         table += "<tr style='background-color:"+bgcolor+"' ><td >"+gamebet.attr("a") + " <span id='" +gamebet.attr("a")+"' style='font-weight:bold;color:"+awayColor+"' >"+gamebet.attr("as")+"</span><br/>" +gamebet.attr("h")+" <span id='" +gamebet.attr("h")+"' style='font-weight:bold;color:"+homeColor+"' >"+gamebet.attr("hs")+"</span></td><td ><span style='font-weight:bold;color:"+gbsColor+"' id='"+gamebet.attr("team")+"_mn' >"+  gamebet.attr("team") + " </td><td id='"+gamebet.attr("bid")+"' align='center' style='color:"+gbsColor+"'>"+bs+"</td></tr><tr style='background-color:"+bgcolor+"'><td style='border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:black' colspan='4'></td></tr>";
-         
-                  
-        });
+                                  if (as > hs) {
+                                  awayColor = "darkgreen";
+                                  homeColor = "darkred";
+                                  }else if (as < hs ) {
+                                  
+                                  awayColor = "darkred";
+                                  homeColor = "darkgreen";
+                                  }
+                                  
+                                  
+                table += "<tr style='background-color:"+bgcolor+"' ><td >"+gamebet.attr("a") + "<br/>" +gamebet.attr("h")+"</td><td><span id='" +gamebet.attr("a")+"' style='font-weight:bold;color:"+awayColor+"' >"+gamebet.attr("as")+"</span><br/> <span id='" +gamebet.attr("h")+"' style='font-weight:bold;color:"+homeColor+"' >"+gamebet.attr("hs")+"</span> </td><td ><span style='font-weight:bold;color:"+gbsColor+"' id='"+gamebet.attr("team")+"_mn' >"+  gamebet.attr("team") + " </td><td id='"+gamebet.attr("bid")+"' align='center' style='color:"+gbsColor+"'>"+bs+"</td></tr><tr style='background-color:"+bgcolor+"'><td style='border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:black' colspan='4'></td></tr>";
+                                  
+                                  
+            });
          
          table +="</table>";
          div.append( table);
          $('#tracker').show().trigger("updatelayout");
-     
-     }
-     
-     
-     
-     function liveSetup(gamebet) {
-         
-         
          
      }
+     
+     
+     
+   
      
      function parsePointGamebet(xml, betStatus, betId, div, displayType) {
          bscolor = "";
@@ -453,10 +473,10 @@
              
          } 
          
-         header = "<div align='center' style='font-size:medium;font-weight:bold;margin-bottom:10px'><hr/>"+displayType+": <span  style='font-weight:bold;color:"+bscolor+"'> "+betStatus+"</span><hr/></div>";
+         header = "<div align='center' style='font-size:medium;font-weight:bold;margin-bottom:10px'><hr/>"+displayType+": <span  style='font-weight:bold;color:"+bscolor+"'> "+betStatus+"</span></div>";
          
          div.append(header);
-         table =  "<table   cellpadding='1' cellspacing='0' style='width:100%;margin-bottom:20px;border-style:solid;border-width:3px;border-color:black' ><tr style='background-color:black;color:white;height:10%' ><td>Game</td><td align='center'>Team</td><td >Bet</td><td>BS</td><td>ST</td></tr>";
+         table =  "<table id='mytable'  cellpadding='3' cellspacing='0' style='width:100%;margin-bottom:20px;border-style:solid;border-width:3px;border-color:black' ><tr style='background-color:black;color:white;height:10%' ><td>Game</td><td >Score</td><td align='center'>Team</td><td >Bet</td><td id='betScore' >BS</td><td id='status' align='center'>ST</td></tr>";
        
          
          
@@ -469,9 +489,10 @@
          hcolor="";
          aid = "";
          hid = "";
+         count = 0;
          xml.find("gamebet").each(function () {
           gamebet = $(this);
-            
+                                  count++;
           bgcolor = liveGameColors(gamebet.attr("live"));
                                   
           bettype = gamebet.attr("type");
@@ -530,7 +551,9 @@
                                   
                                                                   
         
-            table += "<tr style='background-color:"+bgcolor+"'><td>"+gamebet.attr("a")+" <span id='"+aid+"' style='font-weight:bold;color:"+acolor+"' >"+gamebet.attr("as")+"</span><br/>"+gamebet.attr("h")+" <span id='"+hid+"' style='font-weight:bold;color:"+hcolor+"' >"+gamebet.attr("hs")+"</span></td><td id='"+team+"' align='center' style='color:"+teamcolor+"'>"+team+"</td><td id='"+gamebet.attr("bid")+"_bt' style='color:"+btcolor+"' >"+type+"</td><td id='"+gamebet.attr("bid")+"_bs' style='color:"+bscolor+"' >"+gamebet.attr("bs")+"</td><td id='"+gamebet.attr("bid")+"' style='color:"+bscolor+"' >"+bs+"</td></tr><tr><td style='border-bottom-style:solid;border-bottom-width:1px;border-bottom-color:black;background-color:"+bgcolor+"' colspan='5'></td></tr>";
+            table += "<tr style='background-color:"+bgcolor+"'><td>"+gamebet.attr("a")+" <br/>"+gamebet.attr("h")+"</td><td align='center' > <span id='"+aid+"' style='font-weight:bold;color:"+acolor+"' >"+gamebet.attr("as")+"</span> <br/> <span id='"+hid+"' style='font-weight:bold;color:"+hcolor+"' >"+gamebet.attr("hs")+"</span>"
+                                  
+                +  "</td><td id='"+team+"' align='center' style='color:"+teamcolor+"'>"+team+"</td><td id='"+gamebet.attr("bid")+"_bt' style='color:"+btcolor+"' >"+type+"</td><td id='"+gamebet.attr("bid")+"_bs' style='color:"+bscolor+"' >"+gamebet.attr("bs")+"</td><td align='center' id='"+gamebet.attr("bid")+"' style='color:"+bscolor+"' >"+bs+"</td></tr><tr><td style='border-bottom-style:solid;border-bottom-width:1px;border-bottom-color:black;background-color:"+bgcolor+"' colspan='6'></td></tr>";
          
         
                                   
@@ -611,25 +634,36 @@
  </script>
 
     <style>
-        .ui-page {
-            
-            background:black;
+       
+        
+        .ui-content {
+        
+           margin: 0px;
+           padding: 0px;
         }
         
         </style>
+        
+        
+        
 
 </head>
 <body >
 
-    <div data-role="page"  >
+    <div data-role="page" id="page_1"  >
         
         
-       <div data-role="header"  data-position="fixed"  >
- 
+       <div data-role="header" id="header"  data-position="fixed"  >
+           
+           <a href="#" onclick="cancel()" data-theme="a"  >Cancel</a>
+
+			 <!-- <a href="#nav-panel" data-theme="a" data-icon="bars"  >Menu</a> -->
+			 
             <h2>Streamer</h2>
             
-            <a href="#nav-panel" >Menu</a>
+         <!-- <a href="#" onclick="cancel()" data-theme="a" data-icon="back" data-iconpos="notext"></a> -->
             
+                        
                 <select style="display:none" id="selectBet" data-theme="a" onchange="trackBet();"   >
                     <option value="">Select a bet to continue </option>
                 </select>
@@ -648,32 +682,39 @@
              </div>
              
   
+   
+     </div>
+        
+        
+        </div>
      
      
-         
+  <div  data-role="page" id="landscape_page" >
+      
+  
+      <div data-role="content"  >
+          
+          <div id="landscape_content" >
+              
+              
+              
+        </div>
+          
+          
+          
+          
+    </div>
+      
+      
+      
+      
 </div>
      
-     
-     <div align="center" data-theme="a" data-role="footer" data-position="fixed"    >
-     
-     
-     
-     <button  data-theme="a" onclick="cancel();" data-icon="delete" data-iconpos="left" data-inline="true" >Cancel</button>
-     
          
+
      
-     </div>
      
-     <div data-role="panel"  data-position-fixed="true" style="background-color:black;" data-theme="a" id="nav-panel">
-     <ul data-role="listview" data-theme="a" class="nav-search">
-     <li data-icon="delete"><a href="#" data-rel="close">Close menu</a></li>
-     <li><a href="javascript:logout();"   >Sign Out</a></li>
-     <li><a href="javascript:window.location='displayBets.html';" >My Bets</a></li>
-     <li><a href="javascript:window.location='displayLeagues.html';"  >Create Bet</a></li>
-      <li><a href="#"  >Edit User Profile</a></li>
-     </ul>
-     </div>
-</div>
+    
 
 
 </body>

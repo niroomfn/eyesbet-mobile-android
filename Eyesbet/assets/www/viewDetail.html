@@ -338,6 +338,18 @@
      function isBlank(str) {
     	    return (!str || /^\s*$/.test(str));
     	}
+     
+     
+     
+     function addBet( ) {
+    	 
+    	 betId = $("#betid").val();
+    	 sessionStorage.betId = betId;
+    	 sessionStorage.betName= $("#titleBetname").html();
+    	 
+    	 window.location="displayLeagues.html";
+    	 
+     }
  
  </script>
   
@@ -355,11 +367,11 @@
         
         
         <div data-role="header" data-theme="a"  data-position="fixed">
-  <a href="#" id="betid" onclick="deleteBet()" data-inline="true"   data-theme="a" data-role="button" > Delete Bet </a>
+  <a href="#"  onclick="deleteBet()" data-inline="true"   data-theme="a" data-role="button" >Delete Bet</a>
             
             
             <h1>Bet Detail</h1>
-    <a href="#"   data-inline="true" data-theme="a"  data-role="button" > Add New </a>
+    <a href="#" onclick="return addBet()"   data-inline="true" data-theme="a"  data-role="button" >Add Bet</a>
    
         </div>
         
@@ -376,7 +388,7 @@
        <span id="titleBetname" style="font-weight:bold" > </span> 
        
        
-       <a href="#dialogPage" data-role="button"  data-transition='slidedown'  data-rel='dialog' data-theme="a" data-iconpos="notext" data-icon="edit" data-inline="true" ></a></div>
+       <a href="#dialogPage" data-role="button"  data-transition='flip'  data-rel='dialog' data-theme="a" data-iconpos="notext" data-icon="edit" data-inline="true" ></a></div>
   		
          <table style="width:100%;margin-top:15px;" id="detail" cellspacing="0" cellpadding="3" >
       
@@ -404,7 +416,7 @@
      
 </div>
 
-<div data-role="page" id="dialogPage" style="background:black">
+<div data-role="page" id="dialogPage" >
 <div data-role="header">
 <h2>Change Bet Name</h2>
 </div>

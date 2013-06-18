@@ -18,8 +18,7 @@
 
             
             var deviceInfo = function(){
-            	alert(navigator.network.connection.type);
-                if (navigator.network.connection.type == "none") {
+                if (navigator.connection.type == "none") {
                     window.location = "noConnection.html";
                 }
             }
@@ -62,7 +61,7 @@
                        if(xml == null) {
                        $.mobile.hidePageLoadingMsg();
                        
-                       alert("Invalid username/password. Please try again");
+                       alert("Invalid username or password");
                        
                        return false;
                        } else {
@@ -106,9 +105,75 @@
             }
             
             
-           
+         function resetPassword() {
+
+           	  username = $("#resetUsername").val();
+           	  email = $("#resetEmail").val();
+           	  password = $("#resetPassword").val();
+           	  cpassword = $("#resetConfPass").val();
+           	 if (username.length == 0) {
+           		 
+           		 alert("Invalid username");
+           		 return false;
+           	 }
+           	 
+           	 else  if (email.indexOf("@") <= 0 ) {
+           		 
+           		 alert("Invalid email address");
+           		 return false;
+           	 }
+           	 
+           	 else if (password.length <= 3  ) {
+           		 
+           		 alert("Invalid password. Must be greater than 3 charactors");
+           		 return false;
+           	 } else if (password != cpassword) {
+           		 alert("Password dos not math confirmed password");
+           		 return false;
+           	 }
+           	 
+             $.mobile.showPageLoadingMsg();
+
+           	 $.ajax({
+                    type: 'POST',
+                    data: "username="+username+"&email="+email+"&password="+password,
+                    url: 'http://eyesbet.com/m.resetPassword',
+                    dataType: 'xml',
+                    
+                    
+                    success: function(xml){
+                       $.mobile.hidePageLoadingMsg();
+
+                    if ( $(xml).find("msg").attr("value") == "success") {
+                    
+                    alert("Password reset successfully");
+                     window.history.back();
+                    } else {
+                    
+                    	alert("Could not verify username/email" );
+                    	return false;
+                    }
+                    
+                    },
+                    error: function(xhr, error, error2){
+                    
+                    alert(xhr.responseText);
+                    window.location = "index.html";
+                    
+                    }
+                    
+                    
+                    });
+             
+             
+           	 
+           	 return false;
+           	 
+            }
             
-            
+         function isBlank(str) {
+     	    return (!str || /^\s*$/.test(str));
+     	}   
             </script>
         
       <style>
@@ -122,7 +187,7 @@
     </head>
     <body onload="getLoginInfo()">
         
-        <div  data-role="page" >
+        <div  data-role="page" id="page1">
             
             <div  data-role="header" >
                 
@@ -142,7 +207,7 @@
                 
                 <div style="margin-top:35px;">
                     <div align="right" style="font-size:small;"  >
-                        <a  data-theme="a" style="color:darkred"  href="javascript:window.location='register.html';" >Register </a>
+                        <a   style="color:darkred"  href="#register" data-transition="flip" >Register </a>
                     </div>
                     <form>
                         <label for="username" class="ui-hidden-accessible">Username:</label>
@@ -159,17 +224,167 @@
                             <a href='#' data-role="button"   data-theme="a"  data-icon="check" data-inline="true" onclick="login()">Sign in</a>
                             
                         </div>
+                        </form>
                         
+                        <div align="center">
+
+                         <a href="#resetPasswordPage" style="font-size:small"  data-transition='flip'  data-rel='dialog'    >Reset Password</a></div>
+     
+                        </div>
                         
-                    </form>
+                    
                 </div>
                 
                 
                 
+         
+            
+            
+            
+        </div>
+        
+        
+        
+ <div data-role="page" id="resetPasswordPage" >
+ 
+<div data-role="header">
+<h2>Reset Password</h2>
+</div>
+<div data-role="content">
+
+                
+              
+ 
+  <div style="font-weight:bold"> *All fields required</div>
+    <input type="text" name="username" id="resetUsername" value="" placeholder="Username" data-theme="a"/>
+ 
+    <input type="text" name="email" id="resetEmail" value="" placeholder="Email" data-theme="a"/>
+    
+     <input type="password" name="password" id="resetPassword" value="" placeholder="New Password" data-theme="a"/>
+     <input type="password" name="confirmPassword" id="resetConfPass" value="" placeholder="Confirm Password" data-theme="a"/>
+                               
+    <button type="button" onclick="return resetPassword()"    data-theme="a"   >Submit</button>
+                            
+                   
+                        
+                        
+ 
+ 
+</div>
+</div>
+        
+        
+        <div data-role="page" id="register" >
+            
+            
+            <script type="text/javascript">
+                
+                function submitForm() {
+                    
+                    var query = "";
+                    firstName = $("#firstName").val();
+                    lastName = $("#lastName").val();
+                    email = $("#email").val();
+                    username = $("#r_username").val();
+                    password = $("#r_password").val();
+                    cpassword = $("#confirmPassword").val();
+                    if (isBlank(firstName)) {
+                    	alert("Invalid First Name");
+                    	return false;
+                    } else if (isBlank(lastName)) {
+                    	alert("Invalid Last Name");
+                    	return false;
+                    } else if (email.indexOf("@") <= 0 || email.indexOf(".") <= 0) {
+                    	alert("Invalid email");
+                    	return false;
+                    } else if (isBlank(username)) {
+                    	
+                    	alert("Invalid username");
+                    	return false;
+                    } else if (password.length <= 3 ) {
+                    	alert(password);
+                    	alert("Invalid password. Must be greater than 3 characters");
+                    	return false;
+                    }
+                    
+                    
+                    if (password != cpassword) {
+                        
+                        alert("Password does not match the confirm password");
+                        return false;
+                    } else {
+                        query = "firstName="+firstName+"&lastName="+lastName+"&email="+email+"&username="+username+"&password="+password;
+                    }
+                    $.ajax({
+                           type: 'POST',
+                           data: query,
+                           url: 'http://eyesbet.com/m.register',
+                           dataType: 'html',
+                           success: function(xml){
+                           
+                           alert("You have registered successfully");
+                           
+                           window.location = "index.html";
+                           
+                           },
+                           error: function(){
+                           
+                           alert("There was an error processing your request");
+                           }
+                           });
+                    
+                    
+                    
+                    return false;
+                }
+                
+                
+                function cancelRegister() {
+                    
+                    window.history.back();
+                }
+                
+                </script>
+            
+            <div data-role="header">
+                <h2>Register</h2>
+            </div>
+            <div data-role="content">
+                
+                <div style="font-weight:bold"> *All fields required</div>
+                
+                
+                
+                
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    
+                    <tr>
+                         <td>   <input type="text" placeholder="First Name" name="firstName" id="firstName" />
+                        </td>  </tr>
+                    <tr> <td><input type="text" placeholder="Last Name" id="lastName" name="lastName"  />
+                    </td>  </tr>
+                    <tr><td> <input type="text" name="email" id="email" placeholder="Email"  /> </td>  </tr>
+                    <tr><td> <input type="text"  id="r_username" placeholder="Username"  /> </td>  <tr>
+                        <tr><td> <input type="password"  id="r_password" placeholder="Password" /> <td>  </tr>
+                        <tr> <td> <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" /> </td>  </tr>
+                        
+                        
+                        </table>
+                
+                
             </div>
             
-            
-            
+            <div align='center' data-role="footer" data-position="fixed" >
+                
+                    <fieldset    data-role="controlgroup" data-type="horizontal" >
+                        
+                        <button type="button"  data-theme="a" data-icon="add" data-inline="false" onclick="return submitForm()">Register</button>
+                        <button type="button"  data-theme="a" data-inline="false" data-icon="delete"  onclick="cancelRegister()">Cancel</button>
+                        
+                    </fieldset>
+                
+                
+            </div>
         </div>
         
         

@@ -21,7 +21,6 @@
 
  var leagues = ["NBA","NFL","MLB","NHL"];
     
-    
 $(document).ready(function() {
 
 $.mobile.showPageLoadingMsg();
@@ -171,7 +170,7 @@ $.ajax({
     
     
     function submitLeague() {
-        //$('#league').blue();
+        $('#league').blue();
         value = document.getElementById("league").value;
         for( var i=0; i < leagues.length; i++) {
             
@@ -357,7 +356,7 @@ $.ajax({
         
         
             <a href="#" data-role="button"  onclick="return validate()" data-theme="a">Create Bet</a>
-            <a href="#" data-role="button"  onclick="history.back()" data-theme="a">Cancel</a>
+            <a href="#" data-role="button"  onclick="javascript:sessionStorage.clear();history.back()" data-theme="a">Cancel</a>
         
         
         
